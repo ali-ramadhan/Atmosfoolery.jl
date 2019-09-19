@@ -4,6 +4,7 @@
 \usepackage{parskip}
 \usepackage{graphicx}
 \usepackage{physics}
+\usepackage{fullpage}
 
 \title{JULES.jl}
 \author{Tristan Abbott, Ali Ramadhan, and Raphael Rousseau-Rizzi}
@@ -109,17 +110,73 @@ that can be used as input to a Runge-Kutta or Adams-Bashforth time integrator.
 
 \subsection{Diagnosing $p'$}
 
-During the acoustic time steps, $p'$ must be diagnosed from $\rho'$ and $(\rho s)'$. This represents a minor challenge: solving the expression for entropy to get $p(s,t)$ can easily provide an equation for $p'(s', \rho')$, but we need an equation for $p'((\rho s)', \rho')$. An easy way to derive one such equation is to write
+During the acoustic time steps, $p'$ must be diagnosed from $\rho'$ and $(\rho s)'$. To do this, we can recognize that
 \begin{align*}
-\dd{\rho s} &= s \dd{\rho} + \rho \dd{s} \\
-&= s \dd{\rho} + \rho \dd \qty(c_v \ln \qty(\frac{p}{p_0}) - c_p \ln \qty(\frac{\rho}{\rho_0})) \\
-&= s \dd{\rho} + \rho c_v \frac{\dd{p}}{p} - c_p \dd{\rho} \\
-\dd{p} &= \frac{p}{\rho c_v} \qty(\dd{\rho s} + \qty(c_p - s) \dd{\rho}).
+s =& s_0 + c_v \ln \qty (\frac{p}{p_0}) - c_p \ln \qty(\frac{\rho}{\rho_0}) \\
+&= s^t + c_v \ln \qty (\frac{p}{p^t}) - c_p \ln \qty(\frac{\rho}{\rho^t}).
 \end{align*}
-Because perturbations remain small over a single large time step, this provides the basis for a sufficiently accurate expression for $p'$ in terms of $(\rho s)'$:
+Linearizing around the state at time $t$ gives a linear equation relating perturbations around that state:
+\begin{equation*}
+s' = \frac{c_v}{p^t} p' - \frac{c_p}{\rho^t} \rho'.
+\end{equation*}
+Solving for pressure gives
+\begin{equation*}
+p' = \frac{p^t}{c_v} \qty (s' + \frac{c_p}{\rho^t} \rho').
+\end{equation*}
+Finally, using the fact that $s' \approx \qty(\rho s)' / \rho^t$ so long as perturbations are small gives
 \begin{equation}
-p' = \frac{p^t}{\rho^t c_v} \qty(\qty(\rho s)' + (c_p - s^t) \rho').
+p' = \frac{p^t}{c_v \rho^t} \qty ( \qty(\rho s)' + c_p \rho').
 \end{equation}
+
+\subsection{Implicit equation for $(\rho w)'$}
+
+Using the relationship between $p'$, $\rho'$, and $(\rho s)'$ lets us write the equation for $(\rho w)'$ as
+\begin{align*}
+\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \qty(-\partial_z \qty(\frac{p^t}{c_v \rho^t} \qty ( \qty(\rho s)^{1/2} + c_p \rho^{1/2})) - g \rho^{1/2} + R_w^t) \\
+&= \qty(\rho w)^0 + \delta t \qty(-\qty(\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^{1/2} - \qty(\frac{c_p p^t}{c_v \rho^t} \partial_z + g) \rho^{1/2} + R_w^t).
+\end{align*}
+Defining centered time differences in terms of a parameter $\alpha$ as
+\begin{equation*}
+\qty(\cdot)^{1/2} = \qty(\frac{1 + \alpha}{2}) \qty(\cdot)^1 + \qty(\frac{1 - \alpha}{2}) \qty(\cdot)^0 \equiv \beta^0 \qty(\cdot)^0 + \beta^1 \qty(\cdot)^1
+\end{equation*}
+lets us re-write the above equation as
+\begin{align*}
+\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \Big[ \\
+& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
+& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^1 \\ 
+& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
+& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^1 \\
+& + R_w^t \\
+\Big ].
+\end{align*}
+Next, we can eliminate some unknown fields at time $1$ by substituting equations for $\rho^1$ and $\qty(\rho s)^1$:
+\begin{align*}
+\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \Big[ \\
+& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
+& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\qty(\rho s)^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} s^t - \partial_z \qty(\rho w)^{1/2} s^t + R_s^t)) \\ 
+& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
+& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g)\qty (\rho^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} -\partial_z (\rho w)^{1/2} + R_{\rho}^t)) \\
+& + R_w^t \\
+\Big ].
+\end{align*}
+Writing out $\qty(\rho w)^{1/2}$ in terms of the centered time difference and bringing terms involving $\qty(\rho w)^1$ to the left hand side gives
+\begin{align*}
+\qty(\rho w)^1 &- \delta \tau \qty(\frac{\beta_1 c_p p^t}{c_v \rho t} \partial_z)\qty(\delta \tau \beta^1 \partial_z \qty(\rho w)^1 s^t) - \delta \tau \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g) \qty(\delta \tau \beta^1 \partial_z \qty(\rho w)^1) = \\
+& \qty(\rho w)^0 + \delta t \Big[ \\
+& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
+& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\qty(\rho s)^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} s^t - \beta^0 \partial_z \qty(\rho w)^0 s^t + R_s^t)) \\ 
+& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
+& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g)\qty (\rho^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} -\beta^0 \partial_z (\rho w)^0 + R_{\rho}^t)) \\
+& + R_w^t \\
+\Big ].
+\end{align*}
+Finally, we have to determine the coefficients for the $\partial_z$ and $\partial_z(\partial_z)$ operators on the left hand side. (We cannot apply the operators directly because they act on fields we do not yet know.) The coefficients depend on the spatial discretization; for the current implementation (which I need to document), coefficients corresponding to $(\rho w)^1_k$ (i.e. perturbation vertical momentum at level $k$ in the first RHS term) are
+\begin{align*}
+\partial_z(\rho w)^1 &\rightarrow \left \{ \frac{1}{\delta z_{c,k} + \delta z_{c,k-1}} \qty(\rho w)^1_{k+1};\; 0 \qty (\rho w)^1_k ;\; \frac{-1}{\delta z_{c,k} + \delta z_{c,k-1}} \qty(\rho w)^1_{k-1} \right \} \\
+\partial_z\qty(\partial_z \qty(\rho w)^1 ) &\rightarrow \left \{ \frac{1}{\delta z_{c,k} \delta z_{f,k}} \qty(\rho w)^1_{k+1};\; \qty ( \frac{-1}{\delta z_{c,k} \delta z_{f,k}} + \frac{-1}{\delta z_{c,k-1} \delta z_{f,k}}) \qty(\rho w)^1_k;\; \frac{1}{\delta z_{c,k-1} \delta z_{f,k}} \qty(\rho w)^1_{k-1} \right \} \\
+\partial_z\qty(\partial_z \qty(\rho w)^1 s^t ) &\rightarrow \left \{ \frac{s^t_{k+1}}{\delta z_{c,k} \delta z_{f,k}} \qty(\rho w)^1_{k+1};\; \qty ( \frac{-s^t_k}{\delta z_{c,k} \delta z_{f,k}} + \frac{-s^t_k}{\delta z_{c,k-1} \delta z_{f,k}}) \qty(\rho w)^1_k;\; \frac{s^t_{k-1}}{\delta z_{c,k-1} \delta z_{f,k}} \qty(\rho w)^1_{k-1} \right \}.
+\end{align*}
+The right hand side can be determined from operators acting on known fields. If the top and bottom boundary conditions are $(\rho w)^1_1 = 0$ and $(\rho w)^1_N = 0$, this gives a system of linear equations for $(\rho w)^1_k$, $k = 2, 3, ..., N-1$ that can be solved by inverting a tridiagonal matrix.
 
 \section{Advection scheme}
 
