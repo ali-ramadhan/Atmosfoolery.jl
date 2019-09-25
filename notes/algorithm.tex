@@ -127,56 +127,115 @@ Finally, using the fact that $s' \approx \qty(\rho s)' / \rho^t$ so long as pert
 \begin{equation}
 p' = \frac{p^t}{c_v \rho^t} \qty ( \qty(\rho s)' + c_p \rho').
 \end{equation}
+For the sake of abstraction, we'll refer to the coefficients relating $p'$ to other fields as
+\begin{equation*}
+\vec{\gamma} = \qty [\frac{p^t}{c_v \rho^t}, \frac{c_p p^t}{c_v \rho^t} ]
+\end{equation*}
+and the fields themselves as
+\begin{equation*}
+\vec{\phi'} = \qty [\qty(\rho s)', \rho'].
+\end{equation*}
+This allows the pressure perturbation to be written generically as
+\begin{equation}
+p' = \vec{\gamma} \cdot \vec{\phi}.
+\end{equation}
 
 \subsection{Implicit equation for $(\rho w)'$}
 
 Using the relationship between $p'$, $\rho'$, and $(\rho s)'$ lets us write the equation for $(\rho w)'$ as
 \begin{align*}
-\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \qty(-\partial_z \qty(\frac{p^t}{c_v \rho^t} \qty ( \qty(\rho s)^{1/2} + c_p \rho^{1/2})) - g \rho^{1/2} + R_w^t) \\
-&= \qty(\rho w)^0 + \delta t \qty(-\qty(\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^{1/2} - \qty(\frac{c_p p^t}{c_v \rho^t} \partial_z + g) \rho^{1/2} + R_w^t).
+\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \vec{\phi^{1/2}}) - g \rho^{1/2} + R_w^t),
 \end{align*}
-Defining centered time differences in terms of a parameter $\alpha$ as
+which by defining centered time differences in terms of a parameter $\alpha$ as
 \begin{equation*}
 \qty(\cdot)^{1/2} = \qty(\frac{1 + \alpha}{2}) \qty(\cdot)^1 + \qty(\frac{1 - \alpha}{2}) \qty(\cdot)^0 \equiv \beta^0 \qty(\cdot)^0 + \beta^1 \qty(\cdot)^1
 \end{equation*}
-lets us re-write the above equation as
+can in turn be re-written as
 \begin{align*}
-\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \Big[ \\
-& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
-& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^1 \\ 
-& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
-& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^1 \\
-& + R_w^t \\
-\Big ].
+\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \qty(\beta^0\vec{\phi^0} + \beta^1 \vec{\phi^1})) - g \qty(\beta^0 \rho^0 + \beta^1 \rho^1) + R_w^t).
 \end{align*}
-Next, we can eliminate some unknown fields at time $1$ by substituting equations for $\rho^1$ and $\qty(\rho s)^1$:
+Next, we need to re-write $\vec{\phi^1}$ and $\vec{\rho^1}$ in terms of known fields and $\qty(\rho w)^1$. This will introduce differential operators acting on the unknown field $\qty(\rho w)^1$ that must be replaced by coefficients multiplying $(\rho w)^1$ at different levels. To start, we can write the equation for $\qty(\rho w)^1$ at level $k$
 \begin{align*}
-\qty(\rho w)^1 &= \qty(\rho w)^0 + \delta t \Big[ \\
-& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
-& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\qty(\rho s)^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} s^t - \partial_z \qty(\rho w)^{1/2} s^t + R_s^t)) \\ 
-& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
-& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g)\qty (\rho^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} -\partial_z (\rho w)^{1/2} + R_{\rho}^t)) \\
-& + R_w^t \\
-\Big ].
+\qty(\rho w)^1_k &= \qty(\rho w)^0_k + \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \qty(\beta^0\vec{\phi^0} + \beta^1 \vec{\phi^1}))_k - g \qty(\beta^0 \rho^0_k + \beta^1 \rho^1_k) + R_{w,k}^t) \\
+&= \qty(\rho w)^0_k + \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \qty(\beta^0\vec{\phi^0} ))_k - g \qty(\beta^0 \rho^0_k) + R_{w,k}^t) + \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \qty(\beta^1 \vec{\phi^1}))_k - g \qty(\beta^1 \rho^1_k)) \\
+\qty(\rho w)^1_k &+ \beta^1 \delta t \qty(\partial_z \qty(\vec{\gamma} \cdot \vec{\phi^1})_k + g \rho^1_k) = \qty(\rho w)^0_k + \beta^0 \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \vec{\phi^0} )_k - g \rho^0_k) + \delta t R_{w,k}^t.
 \end{align*}
-Writing out $\qty(\rho w)^{1/2}$ in terms of the centered time difference and bringing terms involving $\qty(\rho w)^1$ to the left hand side gives
+As long as the spatial differencing is first-order on a C-grid, we can write
+\begin{equation*}
+\Delta z_{f,k} \partial_z \qty (\vec{\gamma} \cdot \vec{\phi^1})_k = \vec{\gamma}_k \cdot \vec{\phi^1}_k - \vec{\gamma}_{k-1} \cdot \vec{\phi^1}_{k-1}
+\end{equation*}
+and
+\begin{equation*}
+\rho_k^1 = \frac{z_{f,k} - z_{c,k-1}}{z_{c,k} - z_{c,k-1}}\tilde{\rho}_k^1 + \frac{z_{c,k} - z_{f,k}}{z_{c,k} - z_{c,k-1}}\tilde{\rho}_{k-1}^1 \equiv \omega_k \tilde{\rho}_k + (1 - \omega_k) \tilde{\rho}_{k-1}.
+\end{equation*}
+where $\tilde{\rho}_k$ indicates density at scalar levels. Additionally, we can use tracer equations to write
+\begin{equation*}
+\vec{\phi^1}_{k} = \vec{a}_{k} + \vec{b}^k_k \qty(\rho w)^1_k + \vec{b}^{k+1}_k \qty(\rho w)^1_{k+1}
+\end{equation*}
+and
+\begin{equation*}
+\tilde{\rho}^1_k = q_{k} + r^{k}_k \qty(\rho w)^1_{k} + r^{k+1}_k \qty(\rho w)^1_{k+1}
+\end{equation*}
+and then substitute to get
 \begin{align*}
-\qty(\rho w)^1 &- \delta \tau \qty(\frac{\beta_1 c_p p^t}{c_v \rho t} \partial_z)\qty(\delta \tau \beta^1 \partial_z \qty(\rho w)^1 s^t) - \delta \tau \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g) \qty(\delta \tau \beta^1 \partial_z \qty(\rho w)^1) = \\
-& \qty(\rho w)^0 + \delta t \Big[ \\
-& -\qty(\beta^0\frac{p^t}{c_v \rho^t} \partial_z) \qty(\rho s)^0 \\
-& -\qty(\beta^1\frac{p^t}{c_v \rho^t} \partial_z) \qty(\qty(\rho s)^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} s^t - \beta^0 \partial_z \qty(\rho w)^0 s^t + R_s^t)) \\ 
-& - \qty(\frac{\beta^0 c_p p^t}{c_v \rho^t} \partial_z + g) \rho^0 \\
-& - \qty(\frac{\beta^1 c_p p^t}{c_v \rho^t} \partial_z + g)\qty (\rho^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} -\beta^0 \partial_z (\rho w)^0 + R_{\rho}^t)) \\
-& + R_w^t \\
-\Big ].
+\Delta z_{f,k} \partial_z \qty (\vec{\gamma} \cdot \vec{\phi^1})_k &= \vec{\gamma}_k \cdot \vec{a}_k - \vec{\gamma}_{k-1} \cdot \vec{a}_{k-1} + \vec{\gamma}_k \cdot \vec{b}^{k}_{k} \qty(\rho w)^1_k - \vec{\gamma}_{k-1} \cdot \vec{b}^{k-1}_{k-1} \qty(\rho w)^1_{k-1} \\
+&+ \vec{\gamma}_k \cdot \vec{b}^{k+1}_{k} \qty(\rho w)^1_{k+1} - \vec{\gamma}_{k-1} \cdot \vec{b}^{k}_{k-1} \qty(\rho w)^1_{k} \\
+&= \qty(\vec{\gamma}_k \cdot \vec{a}_k - \vec{\gamma}_{k-1} \cdot \vec{a}_{k-1}) + \qty(\vec{\gamma}_{k-1} \cdot \vec{b}^{k-1}_{k-1}) \qty(\rho w)^1_{k-1} \\
+&+ \qty(\vec{\gamma}_k \cdot \vec{b}^{k}_{k} - \vec{\gamma}_{k-1} \cdot \vec{b}^{k}_{k-1}) \qty(\rho w)^1_{k} + \qty(\vec{\gamma}_k \cdot \vec{b}^{k+1}_{k}) \qty(\rho w)^1_{k+1}
 \end{align*}
-Finally, we have to determine the coefficients for the $\partial_z$ and $\partial_z(\partial_z)$ operators on the left hand side. (We cannot apply the operators directly because they act on fields we do not yet know.) The coefficients depend on the spatial discretization; for the current implementation (which I need to document), coefficients corresponding to $(\rho w)^1_k$ (i.e. perturbation vertical momentum at level $k$ in the first RHS term) are
+and
 \begin{align*}
-\partial_z(\rho w)^1 &\rightarrow \left \{ \frac{1}{\delta z_{c,k} + \delta z_{c,k-1}} \qty(\rho w)^1_{k+1};\; 0 \qty (\rho w)^1_k ;\; \frac{-1}{\delta z_{c,k} + \delta z_{c,k-1}} \qty(\rho w)^1_{k-1} \right \} \\
-\partial_z\qty(\partial_z \qty(\rho w)^1 ) &\rightarrow \left \{ \frac{1}{\delta z_{c,k} \delta z_{f,k}} \qty(\rho w)^1_{k+1};\; \qty ( \frac{-1}{\delta z_{c,k} \delta z_{f,k}} + \frac{-1}{\delta z_{c,k-1} \delta z_{f,k}}) \qty(\rho w)^1_k;\; \frac{1}{\delta z_{c,k-1} \delta z_{f,k}} \qty(\rho w)^1_{k-1} \right \} \\
-\partial_z\qty(\partial_z \qty(\rho w)^1 s^t ) &\rightarrow \left \{ \frac{s^t_{k+1}}{\delta z_{c,k} \delta z_{f,k}} \qty(\rho w)^1_{k+1};\; \qty ( \frac{-s^t_k}{\delta z_{c,k} \delta z_{f,k}} + \frac{-s^t_k}{\delta z_{c,k-1} \delta z_{f,k}}) \qty(\rho w)^1_k;\; \frac{s^t_{k-1}}{\delta z_{c,k-1} \delta z_{f,k}} \qty(\rho w)^1_{k-1} \right \}.
+\rho^1_k &= \omega_k \qty(q_k + r^k_k \qty(\rho w)^1_k + r^{k+1}_k \qty(\rho w)^1_{k+1}) + \qty(1 - \omega_k) \qty(q_{k-1} + r^{k-1}_{k-1} \qty(\rho w)^1_{k-1} + r^{k}_{k-1} \qty(\rho w)^1_{k}) \\
+&= \qty(\omega_k q_k + \qty(1 - \omega_k) q_{k-1}) + \qty(\qty(1 - \omega_k)r^{k-1}_{k-1}) \qty(\rho w)^1_{k-1} \\
+&+ \qty(\omega_k r^k_k + \qty(1 - \omega_k) r^k_{k-1}) \qty(\rho w)^1_{k} + \qty(\omega_k r^{k+1}_k) \qty(\rho w)^1_{k+1}.
 \end{align*}
-The right hand side can be determined from operators acting on known fields. If the top and bottom boundary conditions are $(\rho w)^1_1 = 0$ and $(\rho w)^1_N = 0$, this gives a system of linear equations for $(\rho w)^1_k$, $k = 2, 3, ..., N-1$ that can be solved by inverting a tridiagonal matrix.
+
+Inserting this into the equation for $\qty(\rho w)^1_k$ and collecting terms involving $\qty(\rho w)^1$ on the LHS gives
+\begin{align*}
+& \qty(\beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{b}^{k-1}_{k-1} + g \qty(1 - \omega_k) r^{k-1}_{k-1}))\qty(\rho w)^1_{k-1} + \\
+& \qty(1 + \beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \cdot \vec{b}^k_k - \Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{b}_{k-1}^k + g \omega_k r^k_k + g \qty(1 - \omega_k) r^k_{k-1} )) \qty(\rho w)^1_k + \\
+& \qty(\beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \vec{b}^{k+1}_k + g \omega_k r^{k+1}_k)) \qty(\rho w)^1_{k+1} = \\
+& \qty(\rho w)^0_k + \beta^0 \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \vec{\phi^0} )_k - g \rho^0_k) + \delta t R_{w,k}^t \\
+&- \beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \cdot \vec{a}_k - \Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{a}_{k-1} + g \omega_k q_k + g \qty(1 - \omega_k) q_{k-1}).
+\end{align*}
+This gives a tridiagonal system that can be inverted for $\qty(\rho w)^1$.
+
+\subsection{Determining coefficients}
+
+For a dry ideal-gas atmosphere, we have (from earlier)
+\begin{equation}
+\vec{\gamma}_k =  \qty [\frac{p^t_k}{c_v \rho^t_k}, \frac{c_p p^t_k}{c_v \rho^t_k} ]
+\end{equation}
+and
+\begin{equation}
+\vec{\phi'}_k = \qty [\qty(\rho s)'_k, \rho'_k].
+\end{equation}
+From the discrete-time equations for perturbation entropy and density,
+\begin{align*}
+\qty(\rho s)^1 &= \qty(\rho s)^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} s^t - \partial_z \qty(\rho w)^{1/2} s^t + R_s^t), \\
+\rho^1 &= \rho^0 + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1} -\partial_z (\rho w)^{1/2} + R_{\rho}^t), \\
+\end{align*}
+we have
+\begin{align}
+q_k = \rho^0_k + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^{1}_k - \beta^0 \partial_z \qty(\rho w)^0_k + R_{\rho,k}^t),
+\end{align}
+\begin{align}
+\vec{a}_{k} = \qty [ \qty(\rho s)^0_k + \delta \tau \qty(-\grad_h \cdot \qty(\rho {\bf u}_h)^1_k s^t_k - \beta^0 \partial_z \qty(\rho w)^0_k s^t_k + R^t_{s,k}),\;q_k ],
+\end{align}
+\begin{align}
+r^k_k = \Delta z_{c,k}^{-1} \beta^1 \delta \tau,
+\end{align}
+\begin{align}
+r^{k+1}_k = -\Delta z_{c,k}^{-1} \beta^1 \delta \tau,
+\end{align}
+\begin{align}
+\vec{b}^k_k = \qty [\Delta z_{c,k}^{-1} \beta^1 \delta \tau s^t_k ,\; r^k_k],
+\end{align}
+and
+\begin{align}
+\vec{b}^{k+1}_k = \qty [-\Delta z_{c,k}^{-1} \beta^1 \delta \tau s^t_{k+1} ,\; r^{k+1}_k],
+\end{align}
+where $s^t_k$ indicates the entropy at time $t$ interpolated onto the cell w-face at index $k$.
 
 \section{Advection scheme}
 
