@@ -1,0 +1,17 @@
+name = "JULES"
+uuid = "216628ba-da5e-11e9-0e9d-731cbc3ee0ea"
+authors = ["Tristan Abbott", "Ali Ramadhan", "Raphael Rousseau-Rizzi"]
+version = "0.1.0"
+
+[deps]
+Oceananigans = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
+
+[compat]
+julia = "1.1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
