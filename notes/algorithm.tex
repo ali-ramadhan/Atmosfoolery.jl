@@ -195,10 +195,10 @@ Inserting this into the equation for $\qty(\rho w)^1_k$ and collecting terms inv
 & \qty(\beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{b}^{k-1}_{k-1} + g \qty(1 - \omega_k) r^{k-1}_{k-1}))\qty(\rho w)^1_{k-1} + \\
 & \qty(1 + \beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \cdot \vec{b}^k_k - \Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{b}_{k-1}^k + g \omega_k r^k_k + g \qty(1 - \omega_k) r^k_{k-1} )) \qty(\rho w)^1_k + \\
 & \qty(\beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \vec{b}^{k+1}_k + g \omega_k r^{k+1}_k)) \qty(\rho w)^1_{k+1} = \\
-& \qty(\rho w)^0_k + \beta^0 \delta t \qty(-\partial_z \qty(\vec{\gamma} \cdot \vec{\phi^0} )_k - g \rho^0_k) + \delta t R_{w,k}^t \\
+& \qty(\rho w)^0_k + \beta^0 \delta t \qty(-\qty(\partial_z p^0)_k - g \rho^0_k) + \delta t R_{w,k}^t \\
 &- \beta^1 \delta t \qty(\Delta z_{f,k}^{-1} \vec{\gamma}_k \cdot \vec{a}_k - \Delta z_{f,k}^{-1} \vec{\gamma}_{k-1} \cdot \vec{a}_{k-1} + g \omega_k q_k + g \qty(1 - \omega_k) q_{k-1}).
 \end{align*}
-This gives a tridiagonal system that can be inverted for $\qty(\rho w)^1$.
+Combined with the boundary conditions $\qty(\rho w)^1_1 = \qty(\rho w)^1_N = 0$, this gives a tridiagonal system that can be inverted for $\qty(\rho w)^1$.
 
 \subsection{Determining coefficients}
 
