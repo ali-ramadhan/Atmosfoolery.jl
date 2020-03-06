@@ -61,11 +61,11 @@ const F₁ = 22 # [W/m²]
 const κ  = 85 # [m²/kg]
 const αᶻ = 1  # [m^(-4/3)]
 
-Q(a, b) = κ * ∫(a, b, ρ*rₗ) * dz
-
-F_rad(x, y, z, t) = (  F₀ * exp(-Q(z, ∞))  # Cloud-top cooling
-                     + F₁ * exp(-Q(0, z))  # Cloud-base warming
-                     + ρᵢ*cₚ*D*αᶻ * ((z-zᵢ)^(4//3) / 4 + zᵢ*(z-zᵢ)^(1//3))) # Cooling in the free troposphere just above cloud top.
+# Q(a, b) = κ * ∫(a, b, ρ*rₗ) * dz
+#
+# F_rad(x, y, z, t) = (  F₀ * exp(-Q(z, ∞))  # Cloud-top cooling
+#                      + F₁ * exp(-Q(0, z))  # Cloud-base warming
+#                      + ρᵢ*cₚ*D*αᶻ * ((z-zᵢ)^(4//3) / 4 + zᵢ*(z-zᵢ)^(1//3))) # Cooling in the free troposphere just above cloud top.
 
 #####
 ##### Model setup
@@ -82,4 +82,6 @@ Nz = Int(Lz/Δz)
 
 end_time = 4hour
 
-
+topology = (Periodic, Periodic, Bounded)
+grid = RegularCartesianGrid(topology=topology, size=(Nx, Ny, Nz), x=(0, Lx), y=(0, Ly), z=(0, Lz))
+zC = model.grid.zC
