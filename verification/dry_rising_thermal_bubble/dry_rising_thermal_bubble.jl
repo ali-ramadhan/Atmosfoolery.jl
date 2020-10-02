@@ -8,9 +8,12 @@ using Plots
 using VideoIO
 using FileIO
 using JULES
+
 using Oceananigans
+using Oceananigans.Grids
 
 using Oceananigans.Fields: interiorparent
+
 interiorxz(field) = dropdims(interiorparent(field), dims=2)
 
 const km = 1000.0
@@ -182,8 +185,8 @@ function print_progress_and_make_plots(simulation)
     end
 
     if simulation.parameters.make_plots
-        xC, yC, zC = model.grid.xC ./ km, model.grid.yC ./ km, model.grid.zC ./ km
-        xF, yF, zF = model.grid.xF ./ km, model.grid.yF ./ km, model.grid.zF ./ km
+        xC, yC, zC = xnodes(Cell, grid) ./ km, ynodes(Cell, grid) ./ km, znodes(Cell, grid) ./ km
+        xF, yF, zF = xnodes(Face, grid) ./ km, ynodes(Face, grid) ./ km, znodes(Face, grid) ./ km
 
         u_slice = rotr90(interiorxz(model.velocities.u))
         w_slice = rotr90(interiorxz(model.velocities.w))

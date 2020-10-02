@@ -12,10 +12,13 @@ using Printf
 using Plots
 using VideoIO
 using FileIO
+
 using JULES
 using Oceananigans
+using Oceananigans.Grids
 
 using Oceananigans.Fields: interiorparent
+
 interiorxz(field) = dropdims(interiorparent(field), dims=2)
 
 const km = 1000.0
@@ -127,8 +130,8 @@ for n = 1:180
     @printf("t = %.2f s\n", model.clock.time)
     time_step!(model, Δt=0.1, Nt=50)
 
-    xC, yC, zC = model.grid.xC ./ km, model.grid.yC ./ km, model.grid.zC ./ km
-    xF, yF, zF = model.grid.xF ./ km, model.grid.yF ./ km, model.grid.zF ./ km
+    xC, yC, zC = xnodes(Cell, grid) ./ km, ynodes(Cell, grid) ./ km, znodes(Cell, grid) ./ km
+    xF, yF, zF = xnodes(Face, grid) ./ km, ynodes(Face, grid) ./ km, znodes(Face, grid) ./ km
 
     u_slice = rotr90(interiorxz(model.momenta.ρu) ./ interiorxz(model.total_density))
     w_slice = rotr90(interiorxz(model.momenta.ρw) ./ interiorxz(model.total_density))

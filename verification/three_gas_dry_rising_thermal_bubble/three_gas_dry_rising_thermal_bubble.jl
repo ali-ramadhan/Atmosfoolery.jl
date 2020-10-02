@@ -2,11 +2,14 @@ using Printf
 using Plots
 using VideoIO
 using FileIO
+
 using JULES
 using Oceananigans
+using Oceananigans.Grids
 
 using Oceananigans.Operators: ℑzᵃᵃᶠ
 using Oceananigans.Fields: interiorparent
+
 interiorxz(field) = dropdims(interiorparent(field), dims=2)
 
 const km = 1000.0
@@ -218,8 +221,9 @@ function print_progress_and_make_plots(simulation)
     @printf("ρ₁: %.2e, ρ₂: %.2e, ρ₃: %.2e, ρ: %.2e\n", ∂tρ₁, ∂tρ₂, ∂tρ₃, ∂tρ)
 
     if simulation.parameters.make_plots
-        xC, yC, zC = model.grid.xC ./ km, model.grid.yC ./ km, model.grid.zC ./ km
-        xF, yF, zF = model.grid.xF ./ km, model.grid.yF ./ km, model.grid.zF ./ km
+        grid = model.grid
+        xC, yC, zC = xnodes(Cell, grid) ./ km, ynodes(Cell, grid) ./ km, znodes(Cell, grid) ./ km
+        xF, yF, zF = xnodes(Face, grid) ./ km, ynodes(Face, grid) ./ km, znodes(Face, grid) ./ km
 
         update_total_density!(model)
         ρ₁_slice = rotr90(interiorxz(model.tracers.ρ₁))
