@@ -116,9 +116,9 @@ fields = Dict(
     "ρw" => model.momenta.ρw,
     "ρe" => model.tracers.ρe
 )
-    
+
 simulation.output_writers[:fields] =
-    NetCDFOutputWriter(model, fields, filepath="dry_convection.nc", time_interval=10seconds)
+    NetCDFOutputWriter(model, fields, filepath="dry_convection.nc", schedule=TimeInterval(10seconds))
 
 # Save base state to NetCDF.
 ds = simulation.output_writers[:fields].dataset
