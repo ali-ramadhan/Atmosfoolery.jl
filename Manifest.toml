@@ -572,9 +572,9 @@ version = "1.2.0"
 
 [[Oceananigans]]
 deps = ["Adapt", "CUDA", "Crayons", "Dates", "FFTW", "Glob", "InteractiveUtils", "JLD2", "KernelAbstractions", "LinearAlgebra", "Logging", "NCDatasets", "OffsetArrays", "OrderedCollections", "Pkg", "Printf", "Random", "SafeTestsets", "SeawaterPolynomials", "Statistics", "StructArrays"]
-git-tree-sha1 = "dc05bb7f0da60ec315f76479fdbc5a3c80e860f3"
+git-tree-sha1 = "e5efec38ea23f2447403f4884b32f0fabb6a0a36"
 uuid = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
-version = "0.46.0"
+version = "0.48.0"
 
 [[OffsetArrays]]
 deps = ["Adapt"]
