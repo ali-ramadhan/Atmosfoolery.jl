@@ -15,10 +15,7 @@ using NCDatasets
 using CUDA
 
 using Oceananigans
-using Oceananigans.Grids
-using Oceananigans.Advection
-using Oceananigans.OutputWriters
-using Oceananigans.Utils
+using Oceananigans.Units
 using JULES
 
 using Oceananigans.Fields: cpudata
