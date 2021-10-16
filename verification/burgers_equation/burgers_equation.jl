@@ -6,7 +6,7 @@ using Oceananigans.Advection
 using JULES
 
 using JULES: IdealGas
-using Oceananigans.Grids: Cell, xnodes
+using Oceananigans.Grids: Center, xnodes
 
 ENV["GKSwstype"] = "100"
 
@@ -58,7 +58,7 @@ anim = @animate for n in 1:Nt
 
     title = @sprintf("Burgers equation t=%.3f", model.clock.time)
 
-    x = xnodes(Cell, grid)
+    x = xnodes(Center, grid)
     ρu = interior(model.momenta.ρu)[:]
     plot(x, ρu, lw=2, label="", title=title, xlims=(0, L), ylims=(-2, 2), dpi=200)
 end

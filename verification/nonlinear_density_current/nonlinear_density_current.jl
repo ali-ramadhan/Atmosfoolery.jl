@@ -95,7 +95,7 @@ function print_progress(simulation)
     tvar = model.thermodynamic_variable
     ρᵢ, ρeᵢ, ρsᵢ = simulation.parameters
 
-    zC = znodes(Cell, model.grid)
+    zC = znodes(Center, model.grid)
     ρ̄ᵢ = mean(ρᵢ.(0, 0, zC))
     ρ̄ = mean(cpudata(model.total_density))
 
@@ -141,7 +141,7 @@ ds = simulation.output_writers[:fields].dataset
 ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
 ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
 
-x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
+x, y, z = nodes((Center, Center, Center), grid, reshape=true)
 ds_ρ[:, :, :] = ρ₀.(x, y, z)
 ds_ρe[:, :, :] = ρe₀.(x, y, z)
 

@@ -4,7 +4,7 @@ using JULES
 using Oceananigans
 using Oceananigans.Advection
 
-using Oceananigans.Grids: Cell, xnodes
+using Oceananigans.Grids: Center, xnodes
 
 ENV["GKSwstype"] = "100"
 
@@ -52,7 +52,7 @@ anim = @animate for n in 1:Nt
 
     title = @sprintf("Shock tube t=%.3f", model.clock.time)
 
-    x = xnodes(Cell, grid)
+    x = xnodes(Center, grid)
     ρ = interior(model.total_density)[:]
     plot(x, ρ, lw=2, label="", title=title, xlims=(0, 1), ylims=(0, 1), dpi=200)
 end

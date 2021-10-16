@@ -6,7 +6,7 @@ using Oceananigans.Advection
 using JULES
 
 using JULES: IdealGas
-using Oceananigans.Grids: Cell, xnodes
+using Oceananigans.Grids: Center, xnodes
 
 ENV["GKSwstype"] = "100"
 
@@ -43,7 +43,7 @@ function periodic_advection_verification(N, L, T, U, CFL, advection, solution)
     gas = model.gases.ρ
     R, cₚ, cᵥ = gas.R, gas.cₚ, gas.cᵥ
     u₀₀, T₀₀, ρ₀₀, s₀₀ = gas.u₀, gas.T₀, gas.ρ₀, gas.s₀
-    
+
     ρ₀(x, y, z) = 1
     p₀(x, y, z) = 1
     T₀(x, y, z) = p₀(x, y, z) / (R*ρ₀(x, y, z))
@@ -61,10 +61,10 @@ function periodic_advection_verification(N, L, T, U, CFL, advection, solution)
 
     anim = @animate for n in 1:Nt
         @info "Running periodic advection [N=$N, CFL=$CFL, $(typeof(advection)), U=$U]... iteration $n/$Nt"
-        
+
         time_step!(model, Δt)
 
-        x = xnodes(Cell, grid)
+        x = xnodes(Center, grid)
         analytic_solution = solution.(x, model.clock.time)
         ρc = interior(model.tracers.ρc)[:]
         ρv = interior(model.momenta.ρv)[:]
