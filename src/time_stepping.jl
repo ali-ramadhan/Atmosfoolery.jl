@@ -5,7 +5,7 @@ using Oceananigans.BoundaryConditions
 using Oceananigans.Fields: datatuple
 using Oceananigans.TimeSteppers: tick!
 
-import Oceananigans.TimeSteppers: time_step!
+import Oceananigans.TimeSteppers: time_step!, update_state!
 import Oceananigans.Simulations: ab2_or_rk3_time_step!
 
 ab2_or_rk3_time_step!(model::CompressibleModel, Δt; euler) = time_step!(model, Δt)
@@ -44,7 +44,7 @@ function time_step!(model::CompressibleModel, Δt)
                 dependencies=Event(device(arch)))
 
     wait(device(arch), density_update_event)
-    
+
     fill_halo_regions!(merge((Σρ=total_density,), momenta, tracers), model.architecture, model.clock, nothing)
     fill_halo_regions!(momenta.ρw, model.architecture, model.clock, nothing)
     fill_halo_regions!(intermediate_momenta.ρw, model.architecture, model.clock, nothing)
@@ -66,7 +66,7 @@ function time_step!(model::CompressibleModel, Δt)
 
     wait(device(arch), density_update_event)
 
-    fill_halo_regions!(merge((Σρ=total_density,), momenta, tracers), model.architecture, model.clock, nothing)    
+    fill_halo_regions!(merge((Σρ=total_density,), momenta, tracers), model.architecture, model.clock, nothing)
     fill_halo_regions!(momenta.ρw, model.architecture, model.clock, nothing)
     fill_halo_regions!(intermediate_momenta.ρw, model.architecture, model.clock, nothing)
 
@@ -135,3 +135,6 @@ function time_step!(model::CompressibleModel, Δt)
 
     return nothing
 end
+
+# No need to update state at the end of a time step (unlike incompressibleModel).
+update_state!(::CompressibleModel) = nothing

@@ -73,7 +73,7 @@ for Arch in Archs
                 correct_fields = NamedTuple{Tuple(field_names)}(Tuple(correct_fields))
                 summarize_regression_test(test_fields, correct_fields)
 
-                # https://github.com/thabbott/JULES.jl/pull/91#issuecomment-707666010
+                # https://github.com/ali-ramadhan/Atmosfoolery.jl/pull/91#issuecomment-707666010
                 @test all(isapprox.(test_fields.ρu, correct_fields.ρu, atol=1e-12))
                 @test all(isapprox.(test_fields.ρw, correct_fields.ρw, atol=1e-12))
 
@@ -120,7 +120,7 @@ for Arch in Archs
                 file = jldopen(regression_filepath, "r")
 
                 field_names = [:ρ, :ρu, :ρv, :ρw, :ρ₁, :ρ₂, :ρ₃]
-                
+
                 test_fields = [Array(interior(model.total_density)),
                                Array(interior(model.momenta.ρu)),
                                Array(interior(model.momenta.ρv)),
@@ -128,7 +128,7 @@ for Arch in Archs
                                Array(interior(model.tracers.ρ₁)),
                                Array(interior(model.tracers.ρ₂)),
                                Array(interior(model.tracers.ρ₃))]
-                
+
                 correct_fields = [file["ρ"], file["ρu"], file["ρv"], file["ρw"],
                                   file["ρ₁"], file["ρ₂"], file["ρ₃"]]
 
@@ -146,7 +146,7 @@ for Arch in Archs
                 correct_fields = NamedTuple{Tuple(field_names)}(Tuple(correct_fields))
                 summarize_regression_test(test_fields, correct_fields)
 
-                # https://github.com/thabbott/JULES.jl/pull/91#issuecomment-707666010
+                # https://github.com/ali-ramadhan/Atmosfoolery.jl/pull/91#issuecomment-707666010
                 @test all(isapprox.(test_fields.ρu, correct_fields.ρu, atol=1e-12))
                 @test all(isapprox.(test_fields.ρw, correct_fields.ρw, atol=1e-12))
 
