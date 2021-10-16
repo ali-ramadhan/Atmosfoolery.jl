@@ -29,7 +29,7 @@ for Arch in Archs
                 @info "  Testing dry rising thermal bubble regression [$Tvar, $Arch]..."
 
                 simulation = simulate_dry_rising_thermal_bubble(architecture = Arch(),
-                    end_time=4.999, thermodynamic_variable=Tvar())
+                    end_time=5, thermodynamic_variable=Tvar())
 
                 model = simulation.model
                 regression_filepath = "thermal_bubble_regression_$Tvar.jld2"
@@ -40,7 +40,7 @@ for Arch in Archs
                 #     file["ρu"] = interiorparent(model.momenta.ρu)
                 #     file["ρv"] = interiorparent(model.momenta.ρv)
                 #     file["ρw"] = interiorparent(model.momenta.ρw)
-                #
+
                 #     if Tvar == Energy
                 #         file["ρe"] = interiorparent(model.tracers.ρe)
                 #     elseif Tvar == Entropy
@@ -55,7 +55,7 @@ for Arch in Archs
                 test_fields = [Array(interior(model.total_density)),
                                Array(interior(model.momenta.ρu)),
                                Array(interior(model.momenta.ρv)),
-                               Array(interior(model.momenta.ρw)[:, :, 1:end-1])]
+                               Array(interior(model.momenta.ρw))]
 
                 correct_fields = [file["ρ"], file["ρu"], file["ρv"], file["ρw"]]
 
@@ -95,7 +95,7 @@ for Arch in Archs
                 @info "  Testing three gas thermal bubble regression [$Tvar, $Arch]..."
 
                 simulation = simulate_three_gas_dry_rising_thermal_bubble(architecture = Arch(),
-                    end_time=4.999, thermodynamic_variable=Tvar())
+                    end_time=5, thermodynamic_variable=Tvar())
 
                 model = simulation.model
                 regression_filepath = "three_gas_thermal_bubble_regression_$Tvar.jld2"
@@ -109,7 +109,7 @@ for Arch in Archs
                 #     file["ρ₁"] = interiorparent(model.tracers.ρ₁)
                 #     file["ρ₂"] = interiorparent(model.tracers.ρ₂)
                 #     file["ρ₃"] = interiorparent(model.tracers.ρ₃)
-                #
+
                 #     if Tvar == Energy
                 #         file["ρe"] = interiorparent(model.tracers.ρe)
                 #     elseif Tvar == Entropy
@@ -124,7 +124,7 @@ for Arch in Archs
                 test_fields = [Array(interior(model.total_density)),
                                Array(interior(model.momenta.ρu)),
                                Array(interior(model.momenta.ρv)),
-                               Array(interior(model.momenta.ρw)[:, :, 1:end-1]),
+                               Array(interior(model.momenta.ρw)),
                                Array(interior(model.tracers.ρ₁)),
                                Array(interior(model.tracers.ρ₂)),
                                Array(interior(model.tracers.ρ₃))]
@@ -164,4 +164,15 @@ for Arch in Archs
             end
         end
     end
+end
+
+output_files =[
+    "dry_rising_thermal_bubble_Energy.nc",
+    "dry_rising_thermal_bubble_Entropy.nc",
+    "three_gas_dry_rising_thermal_bubble_Energy.nc",
+    "three_gas_dry_rising_thermal_bubble_Entropy.nc"
+]
+
+for filename in output_files
+    rm(filename, force=true)
 end

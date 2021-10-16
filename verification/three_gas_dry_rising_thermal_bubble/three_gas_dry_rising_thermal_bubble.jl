@@ -133,19 +133,20 @@ function simulate_three_gas_dry_rising_thermal_bubble(; architecture=CPU(), ther
                            schedule=TimeInterval(10seconds))
 
     # Save base state to NetCDF.
-    ds = simulation.output_writers[:fields].dataset
-    ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₁ = defVar(ds, "ρ₁₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₂ = defVar(ds, "ρ₂₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₃ = defVar(ds, "ρ₃₀", Float32, ("xC", "yC", "zC"))
-    ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
+    NCDataset(simulation.output_writers[:fields].filepath, "a") do ds
+        ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₁ = defVar(ds, "ρ₁₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₂ = defVar(ds, "ρ₂₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₃ = defVar(ds, "ρ₃₀", Float32, ("xC", "yC", "zC"))
+        ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
 
-    x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
-    ds_ρ[:, :, :] = ρ₀.(x, y, z)
-    ds_ρ₁[:, :, :] = ρ₁₀.(x, y, z)
-    ds_ρ₂[:, :, :] = ρ₂₀.(x, y, z)
-    ds_ρ₃[:, :, :] = ρ₃₀.(x, y, z)
-    ds_ρe[:, :, :] = ρe₀.(x, y, z)
+        x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
+        ds_ρ[:, :, :] = ρ₀.(x, y, z)
+        ds_ρ₁[:, :, :] = ρ₁₀.(x, y, z)
+        ds_ρ₂[:, :, :] = ρ₂₀.(x, y, z)
+        ds_ρ₃[:, :, :] = ρ₃₀.(x, y, z)
+        ds_ρe[:, :, :] = ρe₀.(x, y, z)
+    end
 
     run!(simulation)
 

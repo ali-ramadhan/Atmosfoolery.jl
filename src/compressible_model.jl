@@ -1,13 +1,15 @@
 using Oceananigans
+using Oceananigans: AbstractModel
 using Oceananigans.Advection: CenteredSecondOrder
-using Oceananigans.Models: AbstractModel, Clock, tracernames
+using Oceananigans.Fields: tracernames
+using Oceananigans.TimeSteppers: Clock
 using Oceananigans.Forcings: zeroforcing, ContinuousForcing
 
 #####
 ##### Definition of a compressible model
 #####
 
-mutable struct CompressibleModel{A, FT, Ω, ∇, D, M, V, T, L, K, Θ, G, X, C, F, S} <: AbstractModel
+mutable struct CompressibleModel{A, FT, Ω, ∇, D, M, V, T, L, K, Θ, G, X, C, F, S} <: AbstractModel{S}
               architecture :: A
                       grid :: Ω
                      clock :: Clock{FT}
