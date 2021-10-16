@@ -32,7 +32,7 @@ _compute_temperature!(model::CompressibleModel{GPU}) = CUDA.@sync compute_temper
 for Arch in Archs, N in Ns, Gases in Gases, Tvar in Tvars
     @info "Running temperature computation benchmark [$Arch, N=$N, $Tvar, $Gases]..."
 
-    grid = RegularCartesianGrid(size=(N, N, N), extent=(1, 1, 1))
+    grid = RegularRectilinearGrid(size=(N, N, N), extent=(1, 1, 1))
     model = CompressibleModel(architecture=Arch(), grid=grid, thermodynamic_variable=Tvar(),
                               gases=Gases())
 
@@ -48,7 +48,7 @@ function benchmarks_to_dataframe(suite)
     df = DataFrame(architecture=[], size=[], gases=[],
                    thermodynamic_variable=[], min=[], median=[],
                    mean=[], max=[], memory=[], allocs=[])
-    
+
     for (key, b) in suite
         Arch, N, Gases, Tvar = key
 

@@ -40,7 +40,7 @@ N = Int(L/Δ)
 
 topo = (Periodic, Periodic, Bounded)
 domain = (x=(0, L), y=(0, L), z=(0, L))
-grid = RegularCartesianGrid(topology=topo, size=(N, N, N), halo=(3, 3, 3); domain...)
+grid = RegularRectilinearGrid(topology=topo, size=(N, N, N), halo=(3, 3, 3); domain...)
 
 gas = DryEarth()
 

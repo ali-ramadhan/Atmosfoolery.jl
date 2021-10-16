@@ -6,7 +6,7 @@ Nx = Ny = 1
 Nz = 32
 L = 10e3
 
-grid = RegularCartesianGrid(size=(Nx, Ny, Nz), halo=(2, 2, 2),
+grid = RegularRectilinearGrid(size=(Nx, Ny, Nz), halo=(2, 2, 2),
                             x=(0, L), y=(0, L), z=(0, L))
 #####
 ##### Dry adiabatic atmosphere

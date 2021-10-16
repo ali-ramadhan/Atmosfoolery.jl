@@ -33,7 +33,7 @@ _acoustic_cfl(model::CompressibleModel{GPU}) = CUDA.@sync acoustic_cfl(model, 1)
 for Arch in Archs, N in Ns, Gas in Gases, Tvar in Tvars
     @info "Running CFL benchmark [$Arch, N=$N, $Tvar, $Gas]..."
 
-    grid = RegularCartesianGrid(size=(N, N, N), extent=(1, 1, 1))
+    grid = RegularRectilinearGrid(size=(N, N, N), extent=(1, 1, 1))
     model = CompressibleModel(architecture=Arch(), grid=grid, thermodynamic_variable=Tvar(),
                               gases=Gas())
 
@@ -56,7 +56,7 @@ function benchmarks_to_dataframe(suite)
     df = DataFrame(architecture=[], size=[], gases=[],
                    thermodynamic_variable=[], min=[], median=[],
                    mean=[], max=[], memory=[], allocs=[])
-    
+
     for Arch in Archs, N in Ns, Gas in Gases, Tvar in Tvars
         b = suite[Arch, N, Gas, Tvar]
 

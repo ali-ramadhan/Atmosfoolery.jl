@@ -25,7 +25,7 @@ function periodic_advection_verification(N, L, T, U, CFL, advection, solution)
 
     topo = (Periodic, Periodic, Periodic)
     domain = (x=(-L/2, L/2), y=(0, 1), z=(0, 1))
-    grid = RegularCartesianGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
+    grid = RegularRectilinearGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
 
     Δt = CFL * grid.Δx / abs(U)
     Nt = ceil(Int, T/Δt)

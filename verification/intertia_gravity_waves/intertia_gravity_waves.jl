@@ -16,7 +16,7 @@ Nx = Int(L/Δ)
 Ny = 1
 Nz = Int(H/Δ)
 
-grid = RegularCartesianGrid(size=(Nx, Ny, Nz), halo=(4, 4, 4),
+grid = RegularRectilinearGrid(size=(Nx, Ny, Nz), halo=(4, 4, 4),
                             x=(0, L), y=(0, L), z=(0, H))
 
 model = CompressibleModel(

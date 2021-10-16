@@ -16,7 +16,7 @@ Nt = Int(T/Δt)
 
 topo = (Bounded, Periodic, Periodic)
 domain = (x=(0, L), y=(0, 1), z=(0, 1))
-grid = RegularCartesianGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
+grid = RegularRectilinearGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
 
 model = CompressibleModel(
                       grid = grid,

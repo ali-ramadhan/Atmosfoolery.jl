@@ -26,7 +26,7 @@ sync_step!(model::CompressibleModel{GPU}) = CUDA.@sync time_step!(model, 1)
 for Arch in Archs, N in Ns, Gas in Gases, Tvar in Tvars
     @info "Running static atmosphere benchmark [$Arch, N=$N, $Tvar, $Gas]..."
 
-    grid = RegularCartesianGrid(size=(N, N, N), halo=(2, 2, 2), extent=(1, 1, 1))
+    grid = RegularRectilinearGrid(size=(N, N, N), halo=(2, 2, 2), extent=(1, 1, 1))
     model = CompressibleModel(architecture=Arch(), grid=grid, thermodynamic_variable=Tvar(), gases=Gas())
 
     sync_step!(model) # warmup
@@ -42,7 +42,7 @@ function benchmarks_to_dataframe(suite)
     df = DataFrame(architecture=[], size=[], gases=[],
                    thermodynamic_variable=[], min=[], median=[],
                    mean=[], max=[], memory=[], allocs=[])
-    
+
     for Arch in Archs, N in Ns, Gas in Gases, Tvar in Tvars
         b = suite[Arch, N, Gas, Tvar]
 

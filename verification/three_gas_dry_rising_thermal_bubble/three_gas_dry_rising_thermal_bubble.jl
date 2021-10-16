@@ -31,7 +31,7 @@ function simulate_three_gas_dry_rising_thermal_bubble(; architecture=CPU(), ther
 
     topo = (Periodic, Periodic, Bounded)
     domain = (x=(-Lx/2, Lx/2), y=(-Lx/2, Lx/2), z=(0, Lz))
-    grid = RegularCartesianGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
+    grid = RegularRectilinearGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
 
     model = CompressibleModel(
                   architecture = architecture,
