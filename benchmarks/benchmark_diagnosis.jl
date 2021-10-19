@@ -10,11 +10,8 @@ using JULES
 using BenchmarkTools: prettytime, prettymemory
 using JULES: intermediate_thermodynamic_field, compute_temperature!
 
-Archs = [CPU]
-@hascuda Archs = [CPU, GPU]
-
-Ns = [32, 64]
-@hascuda Ns = [32, 192]
+Archs = CUDA.has_cuda() ? [CPU, GPU] : [CPU]
+Ns = CUDA.has_cuda() ? [32, 192] : [32, 64]
 
 Tvars = [Energy, Entropy]
 Gases = [DryEarth, DryEarth3]

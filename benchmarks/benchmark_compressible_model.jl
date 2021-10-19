@@ -11,8 +11,7 @@ using JULES
 
 using BenchmarkTools: prettytime, prettymemory
 
-Archs = [CPU]
-@hascuda Archs = [CPU, GPU]
+Archs = CUDA.has_cuda() ? [CPU, GPU] : [CPU]
 
 Ns = [32, 192]
 Tvars = [Energy, Entropy]

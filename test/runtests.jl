@@ -11,8 +11,7 @@ using JULES
 
 Logging.global_logger(OceananigansLogger())
 
-         Archs = [CPU]
-# @hascuda Archs = [GPU]
+Archs = CUDA.has_cuda() ? [CPU] : [CPU]
 
 CUDA.allowscalar(true)
 
