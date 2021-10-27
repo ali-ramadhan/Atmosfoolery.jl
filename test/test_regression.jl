@@ -1,5 +1,3 @@
-using Oceananigans.Fields: interiorparent
-
 function summarize_regression_test(fields, correct_fields)
     for (field_name, φ, φ_c) in zip(keys(fields), fields, correct_fields)
         Δ = φ .- φ_c
@@ -36,15 +34,15 @@ for Arch in Archs
 
                 # UNCOMMENT TO GENERATE REGRESSION DATA!
                 # jldopen(regression_filepath, "w") do file
-                #     file["ρ"]  = interiorparent(model.total_density)
-                #     file["ρu"] = interiorparent(model.momenta.ρu)
-                #     file["ρv"] = interiorparent(model.momenta.ρv)
-                #     file["ρw"] = interiorparent(model.momenta.ρw)
+                #     file["ρ"]  = interior(model.total_density)
+                #     file["ρu"] = interior(model.momenta.ρu)
+                #     file["ρv"] = interior(model.momenta.ρv)
+                #     file["ρw"] = interior(model.momenta.ρw)
 
                 #     if Tvar == Energy
-                #         file["ρe"] = interiorparent(model.tracers.ρe)
+                #         file["ρe"] = interior(model.tracers.ρe)
                 #     elseif Tvar == Entropy
-                #         file["ρs"] = interiorparent(model.tracers.ρs)
+                #         file["ρs"] = interior(model.tracers.ρs)
                 #     end
                 # end
 
@@ -102,18 +100,18 @@ for Arch in Archs
 
                 # UNCOMMENT TO GENERATE REGRESSION DATA!
                 # jldopen(regression_filepath, "w") do file
-                #     file["ρ"]  = interiorparent(model.total_density)
-                #     file["ρu"] = interiorparent(model.momenta.ρu)
-                #     file["ρv"] = interiorparent(model.momenta.ρv)
-                #     file["ρw"] = interiorparent(model.momenta.ρw)
-                #     file["ρ₁"] = interiorparent(model.tracers.ρ₁)
-                #     file["ρ₂"] = interiorparent(model.tracers.ρ₂)
-                #     file["ρ₃"] = interiorparent(model.tracers.ρ₃)
+                #     file["ρ"]  = interior(model.total_density)
+                #     file["ρu"] = interior(model.momenta.ρu)
+                #     file["ρv"] = interior(model.momenta.ρv)
+                #     file["ρw"] = interior(model.momenta.ρw)
+                #     file["ρ₁"] = interior(model.tracers.ρ₁)
+                #     file["ρ₂"] = interior(model.tracers.ρ₂)
+                #     file["ρ₃"] = interior(model.tracers.ρ₃)
 
                 #     if Tvar == Energy
-                #         file["ρe"] = interiorparent(model.tracers.ρe)
+                #         file["ρe"] = interior(model.tracers.ρe)
                 #     elseif Tvar == Entropy
-                #         file["ρs"] = interiorparent(model.tracers.ρs)
+                #         file["ρs"] = interior(model.tracers.ρs)
                 #     end
                 # end
 

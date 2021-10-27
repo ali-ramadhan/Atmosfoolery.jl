@@ -1,5 +1,5 @@
 import Base: getindex
-import Oceananigans.Fields: interior, interiorparent
+import Oceananigans.Fields: interior
 
 using Base: @propagate_inbounds
 
@@ -52,5 +52,3 @@ function interior(f::LazyPrimitiveField)
     end
     return data
 end
-
-interiorparent(lf::LazyPrimitiveField) = interior(lf)

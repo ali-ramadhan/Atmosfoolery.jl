@@ -581,9 +581,9 @@ version = "0.3.1"
 
 [[MicrosoftMPI_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "e5c90234b3967684c9c6f87b4a54549b4ce21836"
+git-tree-sha1 = "bb2fe65544e6efd883bb2060088df7dfb7273b41"
 uuid = "9237b28f-5490-5468-be7b-bb81f5f5e6cf"
-version = "10.1.3+0"
+version = "10.1.3+1"
 
 [[Missings]]
 deps = ["DataAPI"]
@@ -624,9 +624,9 @@ version = "1.2.0"
 
 [[Oceananigans]]
 deps = ["Adapt", "CUDA", "Crayons", "CubedSphere", "Dates", "FFTW", "Glob", "InteractiveUtils", "JLD2", "KernelAbstractions", "LinearAlgebra", "Logging", "MPI", "NCDatasets", "OffsetArrays", "OrderedCollections", "PencilFFTs", "Pkg", "Printf", "Random", "Rotations", "SafeTestsets", "SeawaterPolynomials", "Statistics", "StructArrays", "Tullio"]
-git-tree-sha1 = "861d8cca4447304a21a94110e3ffc786cab52dce"
+git-tree-sha1 = "e755485f8297f183da3a161f7c87fb694f50ccab"
 uuid = "9e8cae18-63c1-5223-a75c-80ca9d6e9a09"
-version = "0.56.0"
+version = "0.57.0"
 
 [[OffsetArrays]]
 deps = ["Adapt"]
