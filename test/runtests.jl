@@ -13,8 +13,6 @@ Logging.global_logger(OceananigansLogger())
 
 Archs = CUDA.has_cuda() ? [CPU] : [CPU]
 
-CUDA.allowscalar(true)
-
 @testset "JULES" begin
     include("test_models.jl")
     include("test_lazy_fields.jl")

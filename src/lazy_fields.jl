@@ -6,7 +6,7 @@ using Base: @propagate_inbounds
 using Oceananigans.Operators: ℑxᶠᵃᵃ, ℑyᵃᶠᵃ, ℑzᵃᵃᶠ
 using Oceananigans.Fields
 
-struct LazyPrimitiveField{X, Y, Z, A, G, T, C, D} <: AbstractField{X, Y, Z, A, G, T}
+struct LazyPrimitiveField{X, Y, Z, A, G, T, C, D} <: AbstractField{X, Y, Z, A, G, T, 3}
           architecture :: A
                   grid :: G
     conservative_field :: C
