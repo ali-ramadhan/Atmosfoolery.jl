@@ -6,7 +6,7 @@ using Base: @propagate_inbounds
 using Oceananigans.Operators: ℑxᶠᵃᵃ, ℑyᵃᶠᵃ, ℑzᵃᵃᶠ
 using Oceananigans.Fields
 
-struct LazyPrimitiveField{X, Y, Z, A, G, C, D} <: AbstractField{X, Y, Z, A, G}
+struct LazyPrimitiveField{X, Y, Z, A, G, T, C, D} <: AbstractField{X, Y, Z, A, G, T}
           architecture :: A
                   grid :: G
     conservative_field :: C
@@ -14,7 +14,7 @@ struct LazyPrimitiveField{X, Y, Z, A, G, C, D} <: AbstractField{X, Y, Z, A, G}
 end
 
 LazyPrimitiveField(LX, LY, LZ, arch, grid, ρϕ, ρ) =
-    LazyPrimitiveField{LX, LY, LZ, typeof(arch), typeof(grid), typeof(ρϕ), typeof(ρ)}(arch, grid, ρϕ, ρ)
+    LazyPrimitiveField{LX, LY, LZ, typeof(arch), typeof(grid), eltype(grid), typeof(ρϕ), typeof(ρ)}(arch, grid, ρϕ, ρ)
 
 @inline @propagate_inbounds getindex(f::LazyPrimitiveField{Center, Center, Center}, I...) =
     @inbounds f.conservative_field[I...] / f.density[I...]
