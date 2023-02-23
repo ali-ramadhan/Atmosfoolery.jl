@@ -10,11 +10,8 @@ using JULES
 using BenchmarkTools: prettytime, prettymemory
 using JULES: intermediate_thermodynamic_field, compute_temperature!
 
-Archs = [CPU]
-@hascuda Archs = [CPU, GPU]
-
-Ns = [32, 64]
-@hascuda Ns = [32, 192]
+Archs = CUDA.has_cuda() ? [CPU, GPU] : [CPU]
+Ns = CUDA.has_cuda() ? [32, 192] : [32, 64]
 
 Tvars = [Energy, Entropy]
 Gases = [DryEarth, DryEarth3]
@@ -32,7 +29,7 @@ _compute_temperature!(model::CompressibleModel{GPU}) = CUDA.@sync compute_temper
 for Arch in Archs, N in Ns, Gases in Gases, Tvar in Tvars
     @info "Running temperature computation benchmark [$Arch, N=$N, $Tvar, $Gases]..."
 
-    grid = RegularCartesianGrid(size=(N, N, N), extent=(1, 1, 1))
+    grid = RegularRectilinearGrid(size=(N, N, N), extent=(1, 1, 1))
     model = CompressibleModel(architecture=Arch(), grid=grid, thermodynamic_variable=Tvar(),
                               gases=Gases())
 
@@ -48,7 +45,7 @@ function benchmarks_to_dataframe(suite)
     df = DataFrame(architecture=[], size=[], gases=[],
                    thermodynamic_variable=[], min=[], median=[],
                    mean=[], max=[], memory=[], allocs=[])
-    
+
     for (key, b) in suite
         Arch, N, Gases, Tvar = key
 

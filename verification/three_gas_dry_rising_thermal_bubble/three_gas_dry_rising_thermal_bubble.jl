@@ -5,10 +5,7 @@ using NCDatasets
 using CUDA
 
 using Oceananigans
-using Oceananigans.Grids
-using Oceananigans.Advection
-using Oceananigans.OutputWriters
-using Oceananigans.Utils
+using Oceananigans.Units
 using JULES
 
 using Oceananigans.Fields: cpudata
@@ -31,7 +28,7 @@ function simulate_three_gas_dry_rising_thermal_bubble(; architecture=CPU(), ther
 
     topo = (Periodic, Periodic, Bounded)
     domain = (x=(-Lx/2, Lx/2), y=(-Lx/2, Lx/2), z=(0, Lz))
-    grid = RegularCartesianGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
+    grid = RegularRectilinearGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
 
     model = CompressibleModel(
                   architecture = architecture,
@@ -127,25 +124,26 @@ function simulate_three_gas_dry_rising_thermal_bubble(; architecture=CPU(), ther
 
     tvar isa Energy  && push!(fields, "ρe" => model.tracers.ρe)
     tvar isa Entropy && push!(fields, "ρs" => model.tracers.ρs)
-    
+
     simulation.output_writers[:fields] =
         NetCDFOutputWriter(model, fields, filepath="three_gas_dry_rising_thermal_bubble_$(typeof(tvar)).nc",
-                           time_interval=10seconds)
+                           schedule=TimeInterval(10seconds))
 
     # Save base state to NetCDF.
-    ds = simulation.output_writers[:fields].dataset
-    ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₁ = defVar(ds, "ρ₁₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₂ = defVar(ds, "ρ₂₀", Float32, ("xC", "yC", "zC"))
-    ds_ρ₃ = defVar(ds, "ρ₃₀", Float32, ("xC", "yC", "zC"))
-    ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
+    NCDataset(simulation.output_writers[:fields].filepath, "a") do ds
+        ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₁ = defVar(ds, "ρ₁₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₂ = defVar(ds, "ρ₂₀", Float32, ("xC", "yC", "zC"))
+        ds_ρ₃ = defVar(ds, "ρ₃₀", Float32, ("xC", "yC", "zC"))
+        ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
 
-    x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
-    ds_ρ[:, :, :] = ρ₀.(x, y, z)
-    ds_ρ₁[:, :, :] = ρ₁₀.(x, y, z)
-    ds_ρ₂[:, :, :] = ρ₂₀.(x, y, z)
-    ds_ρ₃[:, :, :] = ρ₃₀.(x, y, z)
-    ds_ρe[:, :, :] = ρe₀.(x, y, z)
+        x, y, z = nodes((Center, Center, Center), grid, reshape=true)
+        ds_ρ[:, :, :] = ρ₀.(x, y, z)
+        ds_ρ₁[:, :, :] = ρ₁₀.(x, y, z)
+        ds_ρ₂[:, :, :] = ρ₂₀.(x, y, z)
+        ds_ρ₃[:, :, :] = ρ₃₀.(x, y, z)
+        ds_ρe[:, :, :] = ρe₀.(x, y, z)
+    end
 
     run!(simulation)
 
@@ -157,7 +155,7 @@ function print_progress(simulation)
     tvar = model.thermodynamic_variable
     ρᵢ, ρeᵢ, ρsᵢ = simulation.parameters
 
-    zC = znodes(Cell, model.grid)
+    zC = znodes(Center, model.grid)
     ρ̄ᵢ = mean(ρᵢ.(0, 0, zC))
     ρ̄ = mean(cpudata(model.total_density))
 

@@ -40,7 +40,7 @@ N = Int(L/Δ)
 
 topo = (Periodic, Periodic, Bounded)
 domain = (x=(0, L), y=(0, L), z=(0, L))
-grid = RegularCartesianGrid(topology=topo, size=(N, N, N), halo=(3, 3, 3); domain...)
+grid = RegularRectilinearGrid(topology=topo, size=(N, N, N), halo=(3, 3, 3); domain...)
 
 gas = DryEarth()
 
@@ -116,16 +116,16 @@ fields = Dict(
     "ρw" => model.momenta.ρw,
     "ρe" => model.tracers.ρe
 )
-    
+
 simulation.output_writers[:fields] =
-    NetCDFOutputWriter(model, fields, filepath="dry_convection.nc", time_interval=10seconds)
+    NetCDFOutputWriter(model, fields, filepath="dry_convection.nc", schedule=TimeInterval(10seconds))
 
 # Save base state to NetCDF.
 ds = simulation.output_writers[:fields].dataset
 ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
 ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
 
-x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
+x, y, z = nodes((Center, Center, Center), grid, reshape=true)
 ds_ρ[:, :, :] = ρ₀.(x, y, z)
 ds_ρe[:, :, :] = ρe₀.(x, y, z)
 

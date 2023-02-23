@@ -15,10 +15,7 @@ using NCDatasets
 using CUDA
 
 using Oceananigans
-using Oceananigans.Grids
-using Oceananigans.Advection
-using Oceananigans.OutputWriters
-using Oceananigans.Utils
+using Oceananigans.Units
 using JULES
 
 using Oceananigans.Fields: cpudata
@@ -39,7 +36,7 @@ Nz = Int(Lz/Δ)
 
 topo = (Periodic, Periodic, Bounded)
 domain = (x=(-Lx/2, Lx/2), y=(-Lx/2, Lx/2), z=(0, Lz))
-grid = RegularCartesianGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
+grid = RegularRectilinearGrid(topology=topo, size=(Nx, Ny, Nz), halo=(3, 3, 3); domain...)
 
 tvar = Energy()
 
@@ -95,7 +92,7 @@ function print_progress(simulation)
     tvar = model.thermodynamic_variable
     ρᵢ, ρeᵢ, ρsᵢ = simulation.parameters
 
-    zC = znodes(Cell, model.grid)
+    zC = znodes(Center, model.grid)
     ρ̄ᵢ = mean(ρᵢ.(0, 0, zC))
     ρ̄ = mean(cpudata(model.total_density))
 
@@ -132,8 +129,8 @@ tvar isa Energy  && push!(fields, "ρe" => model.tracers.ρe)
 tvar isa Entropy && push!(fields, "ρs" => model.tracers.ρs)
 
 simulation.output_writers[:fields] =
-NetCDFOutputWriter(model, fields, filepath="nonlinear_density_current_$(typeof(tvar)).nc",
-                   time_interval=10seconds)
+    NetCDFOutputWriter(model, fields, filepath="nonlinear_density_current_$(typeof(tvar)).nc",
+                       schedule=TimeInterval(10seconds))
 
 
 # Save base state to NetCDF.
@@ -141,7 +138,7 @@ ds = simulation.output_writers[:fields].dataset
 ds_ρ = defVar(ds, "ρ₀", Float32, ("xC", "yC", "zC"))
 ds_ρe = defVar(ds, "ρe₀", Float32, ("xC", "yC", "zC"))
 
-x, y, z = nodes((Cell, Cell, Cell), grid, reshape=true)
+x, y, z = nodes((Center, Center, Center), grid, reshape=true)
 ds_ρ[:, :, :] = ρ₀.(x, y, z)
 ds_ρe[:, :, :] = ρe₀.(x, y, z)
 

@@ -6,7 +6,7 @@ using Oceananigans.Advection
 using JULES
 
 using JULES: IdealGas
-using Oceananigans.Grids: Cell, xnodes
+using Oceananigans.Grids: Center, xnodes
 
 ENV["GKSwstype"] = "100"
 
@@ -20,7 +20,7 @@ ideal_gas = IdealGas(Float64, JULES.R⁰, 1; T₀=1, p₀=1, s₀=1, u₀=0)
 
 topo = (Periodic, Periodic, Periodic)
 domain = (x=(0, L), y=(0, 1), z=(0, 1))
-grid = RegularCartesianGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
+grid = RegularRectilinearGrid(topology=topo, size=(N, 1, 1), halo=(4, 4, 4); domain...)
 
 model = CompressibleModel(
                       grid = grid,
@@ -58,7 +58,7 @@ anim = @animate for n in 1:Nt
 
     title = @sprintf("Burgers equation t=%.3f", model.clock.time)
 
-    x = xnodes(Cell, grid)
+    x = xnodes(Center, grid)
     ρu = interior(model.momenta.ρu)[:]
     plot(x, ρu, lw=2, label="", title=title, xlims=(0, L), ylims=(-2, 2), dpi=200)
 end

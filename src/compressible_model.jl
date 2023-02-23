@@ -1,13 +1,17 @@
 using Oceananigans
+using Oceananigans: AbstractModel
 using Oceananigans.Advection: CenteredSecondOrder
-using Oceananigans.Models: AbstractModel, Clock, tracernames
+using Oceananigans.Fields: tracernames
+using Oceananigans.TimeSteppers: Clock
 using Oceananigans.Forcings: zeroforcing, ContinuousForcing
+
+import Oceananigans: fields
 
 #####
 ##### Definition of a compressible model
 #####
 
-mutable struct CompressibleModel{A, FT, Ω, ∇, D, M, V, T, L, K, Θ, G, X, C, F, S} <: AbstractModel
+mutable struct CompressibleModel{A, FT, Ω, ∇, D, M, V, T, L, K, Θ, G, X, C, F, S} <: AbstractModel{S}
               architecture :: A
                       grid :: Ω
                      clock :: Clock{FT}
@@ -52,7 +56,7 @@ function CompressibleModel(;
                    gravity = g_Earth,
               time_stepper = WickerSkamarockTimeStepper(architecture, grid, tracernames))
 
-    total_density = CellField(architecture, grid)
+    total_density = CenterField(architecture, grid)
 
     gravity = float_type(gravity)
     tracers = TracerFields(tracernames, architecture, grid, boundary_conditions)
@@ -121,8 +125,8 @@ function TracerFields(names, arch, grid, bcs)
     tracer_names = tracernames(names) # filter `names` if it contains velocity fields
     tracer_fields =
         Tuple(c ∈ keys(bcs) ?
-              CellField(arch, grid, bcs[c]) :
-              CellField(arch, grid, TracerBoundaryConditions(grid))
+              CenterField(arch, grid, bcs[c]) :
+              CenterField(arch, grid, TracerBoundaryConditions(grid))
               for c in tracer_names)
     return NamedTuple{tracer_names}(tracer_fields)
 end
@@ -132,10 +136,10 @@ end
 ##### Should merge with incompressible version
 #####
 
-assumed_field_location(name) = name === :ρu ? (Face, Cell, Cell) :
-                               name === :ρv ? (Cell, Face, Cell) :
-                               name === :ρw ? (Cell, Cell, Face) :
-                                              (Cell, Cell, Cell)
+assumed_field_location(name) = name === :ρu ? (Face, Center, Center) :
+                               name === :ρv ? (Center, Face, Center) :
+                               name === :ρw ? (Center, Center, Face) :
+                                              (Center, Center, Center)
 
 regularize_forcing(forcing, field_name, model_field_names) = forcing # fallback
 
@@ -165,3 +169,13 @@ function model_forcing(tracer_names; ρu=nothing, ρv=nothing, ρw=nothing, trac
 
     return merge((ρu=ρu, ρv=ρv, ρw=ρw), tracer_forcings)
 end
+
+#####
+##### Utilities
+#####
+
+fields(model::CompressibleModel) = merge(
+    (ρ = model.total_density,),
+    model.momenta,
+    model.tracers
+)

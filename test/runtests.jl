@@ -11,11 +11,7 @@ using JULES
 
 Logging.global_logger(OceananigansLogger())
 
-         Archs = [CPU]
-@hascuda Archs = [GPU]
-
-
-CUDA.allowscalar(true)
+Archs = CUDA.has_cuda() ? [CPU] : [CPU]
 
 @testset "JULES" begin
     include("test_models.jl")
@@ -23,4 +19,3 @@ CUDA.allowscalar(true)
     include("test_time_stepping.jl")
     include("test_regression.jl")
 end
-

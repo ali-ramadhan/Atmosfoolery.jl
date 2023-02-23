@@ -1,5 +1,3 @@
-using Oceananigans.Fields: interiorparent
-
 function summarize_regression_test(fields, correct_fields)
     for (field_name, φ, φ_c) in zip(keys(fields), fields, correct_fields)
         Δ = φ .- φ_c
@@ -29,22 +27,22 @@ for Arch in Archs
                 @info "  Testing dry rising thermal bubble regression [$Tvar, $Arch]..."
 
                 simulation = simulate_dry_rising_thermal_bubble(architecture = Arch(),
-                    end_time=4.999, thermodynamic_variable=Tvar())
+                    end_time=5, thermodynamic_variable=Tvar())
 
                 model = simulation.model
                 regression_filepath = "thermal_bubble_regression_$Tvar.jld2"
 
                 # UNCOMMENT TO GENERATE REGRESSION DATA!
                 # jldopen(regression_filepath, "w") do file
-                #     file["ρ"]  = interiorparent(model.total_density)
-                #     file["ρu"] = interiorparent(model.momenta.ρu)
-                #     file["ρv"] = interiorparent(model.momenta.ρv)
-                #     file["ρw"] = interiorparent(model.momenta.ρw)
-                #
+                #     file["ρ"]  = interior(model.total_density)
+                #     file["ρu"] = interior(model.momenta.ρu)
+                #     file["ρv"] = interior(model.momenta.ρv)
+                #     file["ρw"] = interior(model.momenta.ρw)
+
                 #     if Tvar == Energy
-                #         file["ρe"] = interiorparent(model.tracers.ρe)
+                #         file["ρe"] = interior(model.tracers.ρe)
                 #     elseif Tvar == Entropy
-                #         file["ρs"] = interiorparent(model.tracers.ρs)
+                #         file["ρs"] = interior(model.tracers.ρs)
                 #     end
                 # end
 
@@ -55,7 +53,7 @@ for Arch in Archs
                 test_fields = [Array(interior(model.total_density)),
                                Array(interior(model.momenta.ρu)),
                                Array(interior(model.momenta.ρv)),
-                               Array(interior(model.momenta.ρw)[:, :, 1:end-1])]
+                               Array(interior(model.momenta.ρw))]
 
                 correct_fields = [file["ρ"], file["ρu"], file["ρv"], file["ρw"]]
 
@@ -73,7 +71,7 @@ for Arch in Archs
                 correct_fields = NamedTuple{Tuple(field_names)}(Tuple(correct_fields))
                 summarize_regression_test(test_fields, correct_fields)
 
-                # https://github.com/thabbott/JULES.jl/pull/91#issuecomment-707666010
+                # https://github.com/ali-ramadhan/Atmosfoolery.jl/pull/91#issuecomment-707666010
                 @test all(isapprox.(test_fields.ρu, correct_fields.ρu, atol=1e-12))
                 @test all(isapprox.(test_fields.ρw, correct_fields.ρw, atol=1e-12))
 
@@ -95,40 +93,40 @@ for Arch in Archs
                 @info "  Testing three gas thermal bubble regression [$Tvar, $Arch]..."
 
                 simulation = simulate_three_gas_dry_rising_thermal_bubble(architecture = Arch(),
-                    end_time=4.999, thermodynamic_variable=Tvar())
+                    end_time=5, thermodynamic_variable=Tvar())
 
                 model = simulation.model
                 regression_filepath = "three_gas_thermal_bubble_regression_$Tvar.jld2"
 
                 # UNCOMMENT TO GENERATE REGRESSION DATA!
                 # jldopen(regression_filepath, "w") do file
-                #     file["ρ"]  = interiorparent(model.total_density)
-                #     file["ρu"] = interiorparent(model.momenta.ρu)
-                #     file["ρv"] = interiorparent(model.momenta.ρv)
-                #     file["ρw"] = interiorparent(model.momenta.ρw)
-                #     file["ρ₁"] = interiorparent(model.tracers.ρ₁)
-                #     file["ρ₂"] = interiorparent(model.tracers.ρ₂)
-                #     file["ρ₃"] = interiorparent(model.tracers.ρ₃)
-                #
+                #     file["ρ"]  = interior(model.total_density)
+                #     file["ρu"] = interior(model.momenta.ρu)
+                #     file["ρv"] = interior(model.momenta.ρv)
+                #     file["ρw"] = interior(model.momenta.ρw)
+                #     file["ρ₁"] = interior(model.tracers.ρ₁)
+                #     file["ρ₂"] = interior(model.tracers.ρ₂)
+                #     file["ρ₃"] = interior(model.tracers.ρ₃)
+
                 #     if Tvar == Energy
-                #         file["ρe"] = interiorparent(model.tracers.ρe)
+                #         file["ρe"] = interior(model.tracers.ρe)
                 #     elseif Tvar == Entropy
-                #         file["ρs"] = interiorparent(model.tracers.ρs)
+                #         file["ρs"] = interior(model.tracers.ρs)
                 #     end
                 # end
 
                 file = jldopen(regression_filepath, "r")
 
                 field_names = [:ρ, :ρu, :ρv, :ρw, :ρ₁, :ρ₂, :ρ₃]
-                
+
                 test_fields = [Array(interior(model.total_density)),
                                Array(interior(model.momenta.ρu)),
                                Array(interior(model.momenta.ρv)),
-                               Array(interior(model.momenta.ρw)[:, :, 1:end-1]),
+                               Array(interior(model.momenta.ρw)),
                                Array(interior(model.tracers.ρ₁)),
                                Array(interior(model.tracers.ρ₂)),
                                Array(interior(model.tracers.ρ₃))]
-                
+
                 correct_fields = [file["ρ"], file["ρu"], file["ρv"], file["ρw"],
                                   file["ρ₁"], file["ρ₂"], file["ρ₃"]]
 
@@ -146,7 +144,7 @@ for Arch in Archs
                 correct_fields = NamedTuple{Tuple(field_names)}(Tuple(correct_fields))
                 summarize_regression_test(test_fields, correct_fields)
 
-                # https://github.com/thabbott/JULES.jl/pull/91#issuecomment-707666010
+                # https://github.com/ali-ramadhan/Atmosfoolery.jl/pull/91#issuecomment-707666010
                 @test all(isapprox.(test_fields.ρu, correct_fields.ρu, atol=1e-12))
                 @test all(isapprox.(test_fields.ρw, correct_fields.ρw, atol=1e-12))
 
@@ -164,4 +162,15 @@ for Arch in Archs
             end
         end
     end
+end
+
+output_files =[
+    "dry_rising_thermal_bubble_Energy.nc",
+    "dry_rising_thermal_bubble_Entropy.nc",
+    "three_gas_dry_rising_thermal_bubble_Energy.nc",
+    "three_gas_dry_rising_thermal_bubble_Entropy.nc"
+]
+
+for filename in output_files
+    rm(filename, force=true)
 end

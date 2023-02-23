@@ -1,6 +1,6 @@
 using KernelAbstractions
 using Oceananigans.Utils
-using Oceananigans.Architectures: device, @hascuda, CPU, GPU, array_type
+using Oceananigans.Architectures: device, CPU, GPU, array_type
 using Oceananigans.Fields: datatuple
 using Oceananigans.BoundaryConditions: apply_x_bcs!, apply_y_bcs!, apply_z_bcs!
 
@@ -108,7 +108,7 @@ function compute_fast_source_terms!(fast_source_terms, arch, grid, thermodynamic
         tracer_event = tracer_kernel!(F_ρc, grid, advection_scheme, total_density, momenta, ρc, S_ρc, dependencies=barrier)
         push!(events, tracer_event)
     end
-    
+
     thermodynamic_variable_event = thermodynamic_variable_kernel!(fast_source_terms.tracers[1], grid, thermodynamic_variable, gases, gravity, total_density, momenta, tracers, dependencies=barrier)
     push!(events, thermodynamic_variable_event)
 
@@ -179,7 +179,7 @@ end
 #####
 
 function advance_state_variables!(state_variables, arch, grid, momenta, tracers, fast_source_terms; Δt)
-    
+
     state_variables, momenta, tracers, fast_source_terms =
         datatuples(state_variables, momenta, tracers, fast_source_terms )
 
@@ -197,7 +197,7 @@ function advance_state_variables!(state_variables, arch, grid, momenta, tracers,
         ρc   = getproperty(tracers, ρc_name)
         ρc⁺  = getproperty(state_variables.tracers, ρc_name)
         F_ρc = getproperty(fast_source_terms.tracers, ρc_name)
-        
+
         tracer_event = tracer_kernel!(ρc⁺, grid, ρc, F_ρc, Δt, dependencies=barrier)
         push!(events, tracer_event)
     end

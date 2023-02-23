@@ -1,5 +1,5 @@
 using JULES.Operators
-using Oceananigans.Buoyancy: AbstractEquationOfState
+using Oceananigans.BuoyancyModels: AbstractEquationOfState
 
 #####
 ##### Universal gas constant and default reference states

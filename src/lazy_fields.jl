@@ -1,12 +1,12 @@
 import Base: getindex
-import Oceananigans.Fields: interior, interiorparent
+import Oceananigans.Fields: interior
 
 using Base: @propagate_inbounds
 
 using Oceananigans.Operators: ℑxᶠᵃᵃ, ℑyᵃᶠᵃ, ℑzᵃᵃᶠ
 using Oceananigans.Fields
 
-struct LazyPrimitiveField{X, Y, Z, A, G, C, D} <: AbstractField{X, Y, Z, A, G}
+struct LazyPrimitiveField{X, Y, Z, A, G, T, C, D} <: AbstractField{X, Y, Z, A, G, T, 3}
           architecture :: A
                   grid :: G
     conservative_field :: C
@@ -14,31 +14,31 @@ struct LazyPrimitiveField{X, Y, Z, A, G, C, D} <: AbstractField{X, Y, Z, A, G}
 end
 
 LazyPrimitiveField(LX, LY, LZ, arch, grid, ρϕ, ρ) =
-    LazyPrimitiveField{LX, LY, LZ, typeof(arch), typeof(grid), typeof(ρϕ), typeof(ρ)}(arch, grid, ρϕ, ρ)
+    LazyPrimitiveField{LX, LY, LZ, typeof(arch), typeof(grid), eltype(grid), typeof(ρϕ), typeof(ρ)}(arch, grid, ρϕ, ρ)
 
-@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Cell, Cell, Cell}, I...) =
+@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Center, Center, Center}, I...) =
     @inbounds f.conservative_field[I...] / f.density[I...]
 
-@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Face, Cell, Cell}, I...) =
+@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Face, Center, Center}, I...) =
     @inbounds f.conservative_field[I...] / ℑxᶠᵃᵃ(I..., f.grid, f.density)
 
-@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Cell, Face, Cell}, I...) =
+@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Center, Face, Center}, I...) =
     @inbounds f.conservative_field[I...] / ℑyᵃᶠᵃ(I..., f.grid, f.density)
 
-@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Cell, Cell, Face}, I...) =
+@inline @propagate_inbounds getindex(f::LazyPrimitiveField{Center, Center, Face}, I...) =
     @inbounds f.conservative_field[I...] / ℑzᵃᵃᶠ(I..., f.grid, f.density)
 
 LazyVelocityFields(arch, grid, ρ, ρũ) =
-    (u = LazyPrimitiveField(Face, Cell, Cell, arch, grid, ρũ.ρu, ρ),
-     v = LazyPrimitiveField(Cell, Face, Cell, arch, grid, ρũ.ρv, ρ),
-     w = LazyPrimitiveField(Cell, Cell, Face, arch, grid, ρũ.ρw, ρ))
+    (u = LazyPrimitiveField(Face, Center, Center, arch, grid, ρũ.ρu, ρ),
+     v = LazyPrimitiveField(Center, Face, Center, arch, grid, ρũ.ρv, ρ),
+     w = LazyPrimitiveField(Center, Center, Face, arch, grid, ρũ.ρw, ρ))
 
 function LazyTracerFields(arch, grid, ρ, ρc̃)
     c_names = [filter(c -> c != 'ρ', string(c)) for c in keys(ρc̃)]
     c_names = filter(s -> s != "", c_names) .|> Symbol |> Tuple  # Don't include the ρ tracer.
 
     c_fields = Tuple(
-        LazyPrimitiveField(Cell, Cell, Cell, arch, grid, getproperty(ρc̃, Symbol(:ρ, c)), ρ)
+        LazyPrimitiveField(Center, Center, Center, arch, grid, getproperty(ρc̃, Symbol(:ρ, c)), ρ)
         for c in c_names
     )
 
@@ -52,5 +52,3 @@ function interior(f::LazyPrimitiveField)
     end
     return data
 end
-
-interiorparent(lf::LazyPrimitiveField) = interior(lf)
